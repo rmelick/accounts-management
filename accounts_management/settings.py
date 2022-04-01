@@ -9,13 +9,13 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
 from pathlib import Path
+
 import mongoengine
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -27,7 +27,6 @@ SECRET_KEY = 'django-insecure-uxea@0+-$s$sa$sk)6+oz=398+mafp2ag8ymm7q$tvtqof$uty
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -71,7 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'accounts_management.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -82,10 +80,11 @@ WSGI_APPLICATION = 'accounts_management.wsgi.application'
 #     }
 # }
 
+
 # Instead of a traditional SQL database, we're going to use mongo
-
-mongoengine.connect(host="mongodb://root:example@127.0.0.1:27017/my_db")
-
+# MONGO_CONNECT_STR = os.environ.get("MONGO_CONNECT_STR", "mongodb://root:example@127.0.0.1:27017/accounts")
+MONGO_CONNECT_STR = os.environ.get("MONGO_CONNECT_STR", "mongodb://127.0.0.1:27017/accounts")
+mongoengine.connect(host=MONGO_CONNECT_STR)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -105,7 +104,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -116,7 +114,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
