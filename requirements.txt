@@ -1,0 +1,2 @@
+strawberry-graphql[debug-server]==0.104.1
+django==4.0.3
