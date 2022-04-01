@@ -1,0 +1,20 @@
+services:
+  mongodb:
+    image: mongo:5.0.6
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - type: volume
+        source: mongo-database
+        target: /data/db
+
+
+# specify the database directories as volumes, to avoid performance overhead of bind mounts
+# https://docs.docker.com/storage/volumes/
+# https://github.com/docker/for-mac/issues/4981#issuecomment-733796401
+# https://engageinteractive.co.uk/blog/making-docker-faster-on-mac
+volumes:
+  mongo-database:

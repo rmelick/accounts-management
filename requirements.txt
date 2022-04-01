@@ -1,2 +1,6 @@
 strawberry-graphql[debug-server]==0.104.1
 django==4.0.3
+# mongodb dependencies
+pymongo[snappy,gssapi,srv,tls]==4.0.2
+dnspython==2.2.1
+mongoengine==0.24.1
