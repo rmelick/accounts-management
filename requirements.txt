@@ -1,8 +1,10 @@
 strawberry-graphql[debug-server]==0.104.1
 django==4.0.3
 mypy==0.942
+gunicorn==20.1.0
 
 # mongodb dependencies
-pymongo[snappy,gssapi,srv,tls]==4.0.2
+pymongo[snappy,gssapi,srv]==4.0.2
 dnspython==2.2.1
 mongoengine==0.24.1
+python-dateutil==2.8.2

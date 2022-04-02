@@ -12,8 +12,28 @@ fields without removing them from the database, or add new DB fields without exp
 
 ### Strawberry
 
-Autocomplete on strawberry not working nicely, not sure why
+- Autocomplete on strawberry not working nicely, not sure why
+- Examples in documentation a little simplistic. For example, no resolvers showing how to link objects to other objects
+-
+
+### Problem statement
+
+- A giant mutation to edit any of the fields on User might be an antipattern
+  https://graphql-rules.com/rules/mutation-business-operations
+  (this guide was linked from strawberry docs)
+- It seems weird that we would want to allow updates to *any* field, we probably don't want to allow updates to
+  the `uid` or `uidNumber` fields, if they are our unique identifiers.
+-
 
 ### Todos
 
-Pass subset of fields to Mongo http://docs.mongoengine.org/guide/querying.html#retrieving-a-subset-of-fields
+To actually be ready for production deployment
+
+* separate settings.py into development and production files
+* add unit tests
+
+To improve code quality
+
+* Pass subset of fields to Mongo http://docs.mongoengine.org/guide/querying.html#retrieving-a-subset-of-fields, probably
+  using the "Info" from strawberry https://strawberry.rocks/docs/types/resolvers#api
+

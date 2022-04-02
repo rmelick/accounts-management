@@ -82,7 +82,6 @@ WSGI_APPLICATION = 'accounts_management.wsgi.application'
 
 
 # Instead of a traditional SQL database, we're going to use mongo
-# MONGO_CONNECT_STR = os.environ.get("MONGO_CONNECT_STR", "mongodb://root:example@127.0.0.1:27017/accounts")
 MONGO_CONNECT_STR = os.environ.get("MONGO_CONNECT_STR", "mongodb://127.0.0.1:27017/accounts")
 mongoengine.connect(host=MONGO_CONNECT_STR)
 
