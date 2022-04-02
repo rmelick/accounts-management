@@ -1,0 +1,7 @@
+env/
+.git/
+docker-compose.yaml
+db.sqlite3
+Dockerfile
+*initial-data*
+*.md

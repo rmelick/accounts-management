@@ -31,6 +31,8 @@ To actually be ready for production deployment
 
 * separate settings.py into development and production files
 * add unit tests
+* cleanup repository to have a cleaner application added to Docker image without readmes, initial data, etc.
+* gunicorn strongly suggests running behind a load balancer like nginx
 
 To improve code quality
 
