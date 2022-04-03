@@ -2,7 +2,7 @@
 
 ## Questions
 
-There are a few questions that will help us decide on a good approach.
+There are a few questions that will help us decide on a good approach for authentication and authorization.
 
 ### Will scientific users be allowed to access the system directly?
 
@@ -12,7 +12,7 @@ accessing which data. It will also allow us to do very granular authorization (f
 their own data).
 
 However, if this system is more of a integration service that syncs data from other services, such as the email system,
-training system, etc., then we may want to authenticate on a "service" level, instead of per-user. Service
+training system, etc., then we may want to authenticate on a "system to system" level, instead of per-user. System
 authentication would probably be through pre-shared API keys, or if all systems were running in the same kubernetes or
 cloud environment, I would look at things like Service Accounts or Workload Identity for authentication. Then, we could
 use an IAM tool to manage the authorization of which services are allowed to communicate with other services.
@@ -20,13 +20,13 @@ use an IAM tool to manage the authorization of which services are allowed to com
 ### Admin access
 
 How do we want to give our team access to the system, to troubleshoot or correct errors? If we adopt a per-user
-authentication schema, we could create special accounts for us, or give our own accounts additional
-"superuser" permissions. If we do not have per-user authentication, or even if we do, we might decide that we don't want
-to create special accounts with lots of permission for the public APIs. Instead, we might want to keep the public APIs
-limited, and then access the system in a different way: perhaps through ssh and running python shell commands, or even
-VPN and accessing the underlying databases directly. While this might seem more secure, it also comes with the downside
-of our admin users having very powerful shell access or direct DB access, which will much more challenging to audit and
-manage.
+authentication schema, we could create special accounts for us, or give our own regular accounts additional
+"superuser" permissions. If we do not have per-user authentication, or even if we do, we might decide that we do not
+want to create special accounts with lots of permission for the public APIs. Instead, we might want to keep the public
+APIs limited, and then access the system in a different way: perhaps through ssh and running python shell commands, or
+even VPN and accessing the underlying databases directly. While this might seem more secure, it also comes with the
+downside of our admin users having very powerful shell access or direct DB access, which will be much more challenging
+to audit and manage.
 
 ### Granularity of permissions
 
@@ -50,10 +50,16 @@ complex of these integrations.
 
 ## Implementation ideas
 
-My instinct is to support both per-user password based authentication and "system to system" authentication. This will
-allow for most users to self-service manage small changes (e.x. name updates, adding an email address). It will also
-allow for relatively simple integration with other services. We will need to create a fair number of authorization
-helper functions / libraries for our internal code to support mixing both types.
+My instinct is to support three types of authentication:
+
+- per-user password based authentication for the normal scientific users
+- "system to system" authentication for the services we will integrate with
+- per-user password authentication for admin users
+
+This will allow for most users to self-service manage small changes (
+e.x. name updates, adding an email address). It will also allow for relatively simple integration with other services.
+We will need to create a fair number of authorization helper functions / libraries for our internal code to support
+mixing both types.
 
 ### Per-User authentication
 
@@ -87,6 +93,15 @@ fetch their keys from Vault first.
 We may however, have some legacy clients where we have little control of how they can call our system. We might have to
 use a basic key as part of the HTTP headers, or even the URL to authenticate.
 
+### Admin authentication
+
+I would keep our admin users in a separate database, and give them a different way of logging in. In this Django app
+example, the scientific users are stored in MongoDB, but we could store the Django admin users in a Postgres database
+using the default Django User authentication system. We could block those user accounts from our normal APIs like
+GraphQL, and have them be the only allowed accounts to access the django admin page. This would let us control and audit
+what they were able to do (based on what functionality we exposed in the admin), and would mean we didn't need to open
+up direct ssh or database access to the admins.
+
 ### Authorization
 
 Once we know who is making the request, determining whether the user is allowed to make the change or access the data
@@ -112,8 +127,9 @@ the role assignment may be able to handle some complex permission hierarchies.
 
 ## python
 
-I stuck with python as I've been working with it almost exclusively for the past few years. For GraphQL, I might look at
-implementing the backend with NodeJS / Typescript instead, as the official GraphQL documentation seems to prefer that.
+I stuck with python as I've been working with it almost exclusively for the past few years. If we are really committed
+to using GraphQL, I might look at implementing the backend with NodeJS / Typescript instead, as the official GraphQL
+documentation seems to prefer that.
 
 ## Django as the python framework
 
@@ -121,18 +137,20 @@ I chose Django as my python framework because I'm familiar with it and it seemed
 
 Cons:
 
-- This current example is hardly using any Django features, especially because we chose Mongoengine instead of Djongo.
-  If we end up using this service to manage our user accounts, I think Django will be very helpful. If we instead
-  delegate the user accounts to an external service like Okta, we might find that most of the Django tooling is
-  unecessary.
+- This current example is hardly using any Django features, especially because we chose Mongoengine instead of Djongo
+  for our Mongo integration. If we end up using this service to manage our user accounts, I think Django will be very
+  helpful. If we instead delegate the user accounts to an external service like Okta, we might find that most of the
+  Django tooling is unnecessary, and the simplicity of a different framework like Flask might help. In my past
+  experience using flask, I have often wished we had chosen Django as more features are added on to the flask app, so I
+  would probably still stick with Django.
 
 ## Which mongo library to use?
 
-I chose MongoEngine because it had more stars/follows on github, and seemed to more directly map to Mongo without Django
-getting in the way. However, it might not be the best choice in a Django app, as their own docs seem to actually suggest
-using Djongo (see http://docs.mongoengine.org/django.html and https://github.com/MongoEngine/django-mongoengine). From
-my brief time working with Mongoengine, I feel it met my expectations, and documentation and StackOverflow support was
-fairly good.
+I chose MongoEngine because it had more stars/follows on github, and seemed easier to map my Strawberry GraphQL objects
+to Mongo without Django getting in the way. However, it might not be the best choice in a Django app, as their own docs
+seem to actually suggest using Djongo (see http://docs.mongoengine.org/django.html
+and https://github.com/MongoEngine/django-mongoengine). From my brief time working with Mongoengine, I feel it met my
+expectations, and documentation and StackOverflow support was fairly good.
 
 ## Using Mongo as the database
 
@@ -169,6 +187,8 @@ Cons:
   GraphQL, I would have liked to see more thorough examples. I felt this slowed me down when trying to use the framework
   the first time
 - Autocomplete for the strawberry libraries was not working nicely in my PyCharm, I'm not sure why.
+
+I would be comfortable sticking with Strawberry.
 
 ## GraphQL
 
