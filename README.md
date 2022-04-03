@@ -1,6 +1,6 @@
 # accounts-management
 
-A django server to implement the problem statement posed in (problem-statement.md)[problem-statement.md].
+A django server to implement the problem statement posed in [problem-statement.md](problem-statement.md).
 
 Answers to the questions posed can be found in [thoughts.md](thoughts.md)
 
