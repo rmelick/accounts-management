@@ -1,7 +1,7 @@
 # Get all information from Mongo
 
 ```
-{
+query GetAllUsers {
   users {
     eppns
     gecos

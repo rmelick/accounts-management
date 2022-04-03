@@ -19,7 +19,7 @@ services:
 
 
   accounts_management:
-    image: accounts_management:latest
+    build: .
     # expose on port 9000 so it doesn't conflict with the debug servers we might run during development
     ports:
       - 9000:8000

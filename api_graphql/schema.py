@@ -7,21 +7,6 @@ import accounts.utils
 from accounts.documents import UserDocument, TrainingStatusDocument
 
 
-def get_books():
-    return [
-        Book(
-            title='The Great Gatsby',
-            author='F. Scott Fitzgerald',
-        ),
-    ]
-
-
-@strawberry.type
-class Book:
-    title: str
-    author: str
-
-
 @strawberry.type
 class TrainingStatus:
     training_uptodate: bool
@@ -104,7 +89,6 @@ def get_all_users():
 @strawberry.type
 class Query:
     users: typing.List[User] = strawberry.field(resolver=get_all_users)
-    books: typing.List[Book] = strawberry.field(resolver=get_books)
 
 
 @strawberry.type
